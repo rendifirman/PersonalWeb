@@ -20,7 +20,7 @@
 
 @php
     $heroPhotoUrl = $settings?->hero_photo ? asset('images/'.$settings->hero_photo) : null;
-    $identityPhoto = $settings?->photo ? asset('images/'.$settings->photo) : null;
+    $identityPhoto = $heroPhotoUrl;
 
     $socialLinks = [
         'linkedin' => ['url' => $settings?->linkedin, 'label' => 'LinkedIn'],

@@ -69,8 +69,8 @@ class HomepageSettingController extends Controller
 
             $file = $request->file('photo');
             $filename = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('images/identity'), $filename);
-            $data['photo'] = 'images/identity/' . $filename;
+            $file->move(public_path('images/homepage'), $filename);
+            $data['photo'] = 'images/homepage/' . $filename;
         }
 
         $settings->fill($data);
