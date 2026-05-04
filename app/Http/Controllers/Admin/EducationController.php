@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Education;
 use Illuminate\Http\Request;
 use Cloudinary\Api\Upload\UploadApi;
+use Cloudinary\Configuration\Configuration;
 
 class EducationController extends Controller
 {
@@ -25,6 +26,18 @@ class EducationController extends Controller
 
     public function store(Request $request)
     {
+        // Set Cloudinary configuration
+        Configuration::instance([
+            'cloud' => [
+                'cloud_name' => config('cloudinary.cloud_name'),
+                'api_key' => config('cloudinary.api_key'),
+                'api_secret' => config('cloudinary.api_secret'),
+            ],
+            'url' => [
+                'secure' => config('cloudinary.secure', true),
+            ],
+        ]);
+
         $data = $request->validate([
             'institution' => ['required', 'string', 'max:255'],
             'degree' => ['required', 'string', 'max:255'],
@@ -63,6 +76,18 @@ class EducationController extends Controller
 
     public function update(Request $request, Education $education)
     {
+        // Set Cloudinary configuration
+        Configuration::instance([
+            'cloud' => [
+                'cloud_name' => config('cloudinary.cloud_name'),
+                'api_key' => config('cloudinary.api_key'),
+                'api_secret' => config('cloudinary.api_secret'),
+            ],
+            'url' => [
+                'secure' => config('cloudinary.secure', true),
+            ],
+        ]);
+
         $data = $request->validate([
             'institution' => ['required', 'string', 'max:255'],
             'degree' => ['required', 'string', 'max:255'],
