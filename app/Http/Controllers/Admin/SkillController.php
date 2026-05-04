@@ -24,7 +24,6 @@ class SkillController extends Controller
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255', 'unique:skills'],
             'type' => ['required', 'in:soft,hard'],
-            'percentage' => ['required', 'integer', 'min:0', 'max:100'],
         ]);
 
         Skill::create($data);
@@ -42,7 +41,6 @@ class SkillController extends Controller
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255', 'unique:skills,name,' . $skill->id],
             'type' => ['required', 'in:soft,hard'],
-            'percentage' => ['required', 'integer', 'min:0', 'max:100'],
         ]);
 
         $skill->update($data);

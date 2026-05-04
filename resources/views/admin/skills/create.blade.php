@@ -70,26 +70,6 @@
             @enderror
         </div>
 
-        <!-- Persentase Skill -->
-        <div class="mb-8">
-            <label class="block text-sm font-medium text-gray-700 mb-1">
-                Persentase Kemahiran <span class="text-red-500">*</span>
-            </label>
-            <div class="flex items-center gap-3">
-                <input type="range" name="percentage" min="0" max="100" value="{{ old('percentage', 80) }}"
-                       class="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
-                       oninput="updatePercentageValue(this.value)" />
-                <input type="number" id="percentageValue" value="{{ old('percentage', 80) }}" readonly
-                       class="w-16 px-2 py-1 text-center border border-gray-300 rounded-md bg-gray-50" />
-                <span class="text-sm text-gray-500">%</span>
-            </div>
-            @error('percentage')
-                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-            @else
-                <p class="mt-1 text-xs text-gray-400">Persentase kemahiran skill ini (0-100%).</p>
-            @enderror
-        </div>
-
         <!-- Tombol Aksi -->
         <div class="flex items-center gap-3 pt-2">
             <button type="submit" class="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-2.5 text-white font-medium shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-indigo-500">
@@ -105,9 +85,4 @@
     </form>
 </div>
 
-<script>
-function updatePercentageValue(value) {
-    document.getElementById('percentageValue').value = value;
-}
-</script>
 @endsection

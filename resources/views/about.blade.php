@@ -32,17 +32,11 @@
                 <div class="mt-8 space-y-5 max-w-2xl">
                     <h3 class="text-lg font-semibold text-slate-900">Hard Skills</h3>
                     @if($hardSkills->isNotEmpty())
-                        @foreach($hardSkills as $skill)
-                            <div>
-                                <div class="mb-2 flex items-center justify-between text-sm font-medium text-slate-700">
-                                    <span>{{ $skill->name }}</span>
-                                    <span>{{ $skill->percentage ?? 0 }}%</span>
-                                </div>
-                                <div class="h-2 rounded-full bg-slate-200">
-                                    <div class="h-2 rounded-full bg-indigo-600 transition-all duration-500" style="width: {{ $skill->percentage ?? 0 }}%"></div>
-                                </div>
-                            </div>
-                        @endforeach
+                        <div class="flex flex-wrap gap-2">
+                            @foreach($hardSkills as $skill)
+                                <span class="rounded-full bg-indigo-100 px-4 py-2 text-sm text-indigo-700">{{ $skill->name }}</span>
+                            @endforeach
+                        </div>
                     @else
                         <div class="rounded-2xl border border-dashed border-slate-300 bg-white p-5 text-sm text-slate-500">
                             Belum ada hard skill yang tersedia. Tambahkan skill hard skill di admin untuk menampilkannya di sini.

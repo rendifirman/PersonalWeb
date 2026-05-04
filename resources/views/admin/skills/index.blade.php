@@ -52,7 +52,6 @@
                     <tr>
                         <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Nama Skill</th>
                         <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Tipe</th>
-                        <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Persentase</th>
                         <th class="px-6 py-4 text-right text-xs font-semibold uppercase tracking-wider text-gray-500">Aksi</th>
                     </tr>
                 </thead>
@@ -73,14 +72,6 @@
                                     </span>
                                 @endif
                             </td>
-                            <td class="px-6 py-4">
-                                <div class="flex items-center gap-2">
-                                    <div class="flex-1 bg-gray-200 rounded-full h-2">
-                                        <div class="bg-indigo-600 h-2 rounded-full" style="width: {{ $skill->percentage }}%"></div>
-                                    </div>
-                                    <span class="text-sm text-gray-600 font-medium">{{ $skill->percentage }}%</span>
-                                </div>
-                            </td>
                             <td class="px-6 py-4 text-right">
                                 <div class="flex items-center justify-end gap-2">
                                     <a href="{{ route('admin.skills.edit', $skill) }}" class="inline-flex items-center gap-1 rounded-full border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50 transition shadow-sm">
@@ -100,7 +91,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="4" class="px-6 py-12 text-center text-gray-500">
+                            <td colspan="3" class="px-6 py-12 text-center text-gray-500">
                                 <svg class="w-12 h-12 mx-auto text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 3h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2zm3 8h8m-8 4h8" />
                                 </svg>
