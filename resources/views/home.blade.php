@@ -19,8 +19,8 @@
 </style>
 
 @php
-    $heroPhotoUrl = $settings?->hero_photo ? asset('storage/'.$settings->hero_photo) : null;
-    $identityPhoto = $settings?->photo ? asset('storage/'.$settings->photo) : null;
+    $heroPhotoUrl = $settings?->hero_photo ? asset('images/'.$settings->hero_photo) : null;
+    $identityPhoto = $settings?->photo ? asset('images/'.$settings->photo) : null;
 
     $socialLinks = [
         'linkedin' => ['url' => $settings?->linkedin, 'label' => 'LinkedIn'],
@@ -36,7 +36,7 @@
                 'type' => 'Pengalaman',
                 'title' => $experience->title,
                 'subtitle' => $experience->company,
-                'photo' => asset('storage/'.$experience->evidence_photo),
+                'photo' => asset('images/'.$experience->evidence_photo),
             ]);
         }
     }
@@ -46,7 +46,7 @@
                 'type' => 'Project',
                 'title' => $project->title,
                 'subtitle' => $project->tags,
-                'photo' => asset('storage/'.$project->evidence_photo),
+                'photo' => asset('images/'.$project->evidence_photo),
             ]);
         }
     }
@@ -213,7 +213,7 @@
                             <div class="overflow-hidden rounded-2xl bg-slate-100">
                                 @if($education->evidence_photo)
                                     <div class="flex items-center justify-center" style="min-height: 128px;">
-                                        <img src="{{ asset('storage/'.$education->evidence_photo) }}" alt="{{ $education->institution }}" class="max-h-32 w-full object-contain" />
+                                        <img src="{{ asset('images/'.$education->evidence_photo) }}" alt="{{ $education->institution }}" class="max-h-32 w-full object-contain" />
                                     </div>
                                 @else
                                     <div class="flex h-32 items-center justify-center text-slate-400">Tidak ada gambar</div>
@@ -307,7 +307,7 @@
                         <article class="min-w-[270px] max-w-[270px] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-md sm:min-w-[320px] sm:max-w-[320px]">
                             @if($project->evidence_photo)
                                 <div class="h-44 w-full overflow-hidden bg-slate-100 sm:h-52">
-                                    <img src="{{ asset('storage/'.$project->evidence_photo) }}" alt="{{ $project->title }}" class="h-full w-full object-cover">
+                                    <img src="{{ asset('images/'.$project->evidence_photo) }}" alt="{{ $project->title }}" class="h-full w-full object-cover">
                                 </div>
                             @endif
                             <div class="p-5">
@@ -394,7 +394,7 @@
 
                         @if($experience->evidence_photo)
                             <div class="mt-4 overflow-hidden rounded-2xl bg-slate-50">
-                                <img src="{{ asset('storage/'.$experience->evidence_photo) }}" alt="Bukti pengalaman" class="max-h-52 w-full object-cover">
+                                <img src="{{ asset('images/'.$experience->evidence_photo) }}" alt="Bukti pengalaman" class="max-h-52 w-full object-cover">
                             </div>
                         @endif
                     </div>

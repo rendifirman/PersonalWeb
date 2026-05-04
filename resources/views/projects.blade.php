@@ -4,7 +4,7 @@
 
 @section('content')
 @php
-    $heroPhotoUrl = $settings?->hero_photo ? asset('storage/'.$settings->hero_photo) : null;
+    $heroPhotoUrl = $settings?->hero_photo ? asset('images/'.$settings->hero_photo) : null;
 @endphp
 
 <div class="min-h-screen bg-[#f7f7fb] text-slate-800">
@@ -32,7 +32,7 @@
                             <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
                                 @if($project->evidence_photo)
                                     <div class="mb-4 overflow-hidden rounded-lg">
-                                        <img src="{{ asset('storage/'.$project->evidence_photo) }}"
+                                        <img src="{{ asset('images/'.$project->evidence_photo) }}"
                                              alt="{{ $project->title }}"
                                              class="h-48 w-full object-cover transition-transform duration-300 hover:scale-105">
                                     </div>

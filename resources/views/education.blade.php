@@ -4,7 +4,7 @@
 
 @section('content')
 @php
-    $heroPhotoUrl = $settings?->hero_photo ? asset('storage/'.$settings->hero_photo) : null;
+    $heroPhotoUrl = $settings?->hero_photo ? asset('images/'.$settings->hero_photo) : null;
 @endphp
 
 <div class="min-h-screen bg-[#f7f7fb] text-slate-800">
@@ -32,7 +32,7 @@
                                 <div class="overflow-hidden rounded-2xl bg-slate-100">
                                     @if($education->evidence_photo)
                                         <div class="flex items-center justify-center" style="min-height: 192px;">
-                                            <img src="{{ asset('storage/'.$education->evidence_photo) }}" alt="Logo {{ $education->institution }}" class="max-h-48 w-full object-contain" />
+                                            <img src="{{ asset('images/'.$education->evidence_photo) }}" alt="Logo {{ $education->institution }}" class="max-h-48 w-full object-contain" />
                                         </div>
                                     @else
                                         <div class="flex h-48 items-center justify-center text-slate-400">Tidak ada gambar</div>

@@ -124,7 +124,7 @@
             <label class="block text-sm font-medium text-gray-700 mb-1">Foto Bukti / Dokumentasi</label>
             @if($experience->evidence_photo)
                 <div class="mt-2 mb-3">
-                    <img src="{{ asset('storage/'.$experience->evidence_photo) }}" alt="Pratinjau bukti pengalaman"
+                    <img src="{{ asset('images/'.$experience->evidence_photo) }}" alt="Pratinjau bukti pengalaman"
                          class="h-40 w-full max-w-md rounded-xl object-cover border border-gray-200 shadow-sm" />
                 </div>
             @endif

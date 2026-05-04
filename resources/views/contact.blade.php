@@ -4,7 +4,7 @@
 
 @section('content')
 @php
-    $heroPhotoUrl = $settings?->hero_photo ? asset('storage/'.$settings->hero_photo) : null;
+    $heroPhotoUrl = $settings?->hero_photo ? asset('images/'.$settings->hero_photo) : null;
 @endphp
 
 <div class="min-h-screen bg-[#f7f7fb] text-slate-800">
