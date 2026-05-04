@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Experience;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class ExperienceController extends Controller
 {
@@ -37,7 +36,10 @@ class ExperienceController extends Controller
         $data['show_on_homepage'] = $request->boolean('show_on_homepage');
 
         if ($request->hasFile('evidence_photo')) {
-            $data['evidence_photo'] = $request->file('evidence_photo')->store('experiences', 'public');
+            $file = $request->file('evidence_photo');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('images/experiences'), $filename);
+            $data['evidence_photo'] = 'images/experiences/' . $filename;
         }
 
         Experience::create($data);
@@ -67,9 +69,15 @@ class ExperienceController extends Controller
 
         if ($request->hasFile('evidence_photo')) {
             if ($experience->evidence_photo) {
-                Storage::disk('public')->delete($experience->evidence_photo);
+                $oldPath = public_path($experience->evidence_photo);
+                if (file_exists($oldPath)) {
+                    unlink($oldPath);
+                }
             }
-            $data['evidence_photo'] = $request->file('evidence_photo')->store('experiences', 'public');
+            $file = $request->file('evidence_photo');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('images/experiences'), $filename);
+            $data['evidence_photo'] = 'images/experiences/' . $filename;
         }
 
         $experience->update($data);

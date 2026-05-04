@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Project;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class ProjectController extends Controller
 {
@@ -37,7 +36,10 @@ class ProjectController extends Controller
         $data['show_on_homepage'] = $request->boolean('show_on_homepage');
 
         if ($request->hasFile('evidence_photo')) {
-            $data['evidence_photo'] = $request->file('evidence_photo')->store('projects', 'public');
+            $file = $request->file('evidence_photo');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('images/projects'), $filename);
+            $data['evidence_photo'] = 'images/projects/' . $filename;
         }
 
         Project::create($data);
@@ -67,9 +69,15 @@ class ProjectController extends Controller
 
         if ($request->hasFile('evidence_photo')) {
             if ($project->evidence_photo) {
-                Storage::disk('public')->delete($project->evidence_photo);
+                $oldPath = public_path($project->evidence_photo);
+                if (file_exists($oldPath)) {
+                    unlink($oldPath);
+                }
             }
-            $data['evidence_photo'] = $request->file('evidence_photo')->store('projects', 'public');
+            $file = $request->file('evidence_photo');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('images/projects'), $filename);
+            $data['evidence_photo'] = 'images/projects/' . $filename;
         }
 
         $project->update($data);

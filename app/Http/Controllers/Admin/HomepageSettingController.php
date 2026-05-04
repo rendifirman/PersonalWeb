@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\HomepageSetting;
 use App\Models\Skill;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class HomepageSettingController extends Controller
 {
@@ -48,18 +47,30 @@ class HomepageSettingController extends Controller
 
         if ($request->hasFile('hero_photo')) {
             if ($settings->hero_photo) {
-                Storage::disk('public')->delete($settings->hero_photo);
+                $oldPath = public_path($settings->hero_photo);
+                if (file_exists($oldPath)) {
+                    unlink($oldPath);
+                }
             }
 
-            $data['hero_photo'] = $request->file('hero_photo')->store('homepage', 'public');
+            $file = $request->file('hero_photo');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('images/homepage'), $filename);
+            $data['hero_photo'] = 'images/homepage/' . $filename;
         }
 
         if ($request->hasFile('photo')) {
             if ($settings->photo) {
-                Storage::disk('public')->delete($settings->photo);
+                $oldPath = public_path($settings->photo);
+                if (file_exists($oldPath)) {
+                    unlink($oldPath);
+                }
             }
 
-            $data['photo'] = $request->file('photo')->store('identity', 'public');
+            $file = $request->file('photo');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('images/identity'), $filename);
+            $data['photo'] = 'images/identity/' . $filename;
         }
 
         $settings->fill($data);

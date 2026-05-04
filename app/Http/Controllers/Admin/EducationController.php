@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Education;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class EducationController extends Controller
 {
@@ -38,7 +37,10 @@ class EducationController extends Controller
         $data['show_on_homepage'] = $request->boolean('show_on_homepage');
 
         if ($request->hasFile('evidence_photo')) {
-            $data['evidence_photo'] = $request->file('evidence_photo')->store('educations', 'public');
+            $file = $request->file('evidence_photo');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('images/educations'), $filename);
+            $data['evidence_photo'] = 'images/educations/' . $filename;
         }
 
         Education::create($data);
@@ -69,9 +71,15 @@ class EducationController extends Controller
 
         if ($request->hasFile('evidence_photo')) {
             if ($education->evidence_photo) {
-                Storage::disk('public')->delete($education->evidence_photo);
+                $oldPath = public_path($education->evidence_photo);
+                if (file_exists($oldPath)) {
+                    unlink($oldPath);
+                }
             }
-            $data['evidence_photo'] = $request->file('evidence_photo')->store('educations', 'public');
+            $file = $request->file('evidence_photo');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('images/educations'), $filename);
+            $data['evidence_photo'] = 'images/educations/' . $filename;
         }
 
         $education->update($data);
