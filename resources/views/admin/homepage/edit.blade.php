@@ -93,7 +93,7 @@
             <label class="text-sm font-medium text-gray-700">Foto Hero (lingkaran kanan)</label>
             @if($settings?->hero_photo)
                 <div class="mt-2">
-                    <img src="{{ asset('images/'.$settings->hero_photo) }}" alt="Pratinjau foto hero" class="h-24 w-24 rounded-full object-cover border border-gray-200 shadow-sm" />
+                    <img src="{{ $settings->hero_photo }}" alt="Pratinjau foto hero" class="h-24 w-24 rounded-full object-cover border border-gray-200 shadow-sm" />
                 </div>
             @endif
             <input type="file" name="hero_photo" accept="image/*" class="mt-3 block w-full text-sm text-gray-500 file:mr-3 file:rounded-full file:border-0 file:bg-indigo-50 file:px-4 file:py-2 file:text-indigo-700 hover:file:bg-indigo-100" />
@@ -128,7 +128,7 @@
             <label class="text-sm font-medium text-gray-700">Foto Profil (footer)</label>
             @if($settings?->photo)
                 <div class="mt-2">
-                    <img src="{{ asset('images/'.$settings->photo) }}" alt="Pratinjau foto profil" class="h-20 w-20 rounded-full object-cover border border-gray-200 shadow-sm" />
+                    <img src="{{ $settings->photo }}" alt="Pratinjau foto profil" class="h-20 w-20 rounded-full object-cover border border-gray-200 shadow-sm" />
                 </div>
             @endif
             <input type="file" name="photo" accept="image/*" class="mt-3 block w-full text-sm text-gray-500 file:mr-3 file:rounded-full file:border-0 file:bg-indigo-50 file:px-4 file:py-2 file:text-indigo-700 hover:file:bg-indigo-100" />

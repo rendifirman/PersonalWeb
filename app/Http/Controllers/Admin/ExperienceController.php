@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Experience;
 use Illuminate\Http\Request;
+use Cloudinary\Api\Upload\UploadApi;
 
 class ExperienceController extends Controller
 {
@@ -36,10 +37,15 @@ class ExperienceController extends Controller
         $data['show_on_homepage'] = $request->boolean('show_on_homepage');
 
         if ($request->hasFile('evidence_photo')) {
-            $file = $request->file('evidence_photo');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('images/experiences'), $filename);
-            $data['evidence_photo'] = 'images/experiences/' . $filename;
+            $uploadApi = new UploadApi();
+            $result = $uploadApi->upload($request->file('evidence_photo')->getRealPath(), [
+                'folder' => 'portfolio/experiences',
+                'public_id' => 'exp_' . time() . '_' . uniqid(),
+                'transformation' => [
+                    ['width' => 800, 'height' => 600, 'crop' => 'limit'],
+                ]
+            ]);
+            $data['evidence_photo'] = $result['secure_url'];
         }
 
         Experience::create($data);
@@ -69,15 +75,23 @@ class ExperienceController extends Controller
 
         if ($request->hasFile('evidence_photo')) {
             if ($experience->evidence_photo) {
-                $oldPath = public_path($experience->evidence_photo);
-                if (file_exists($oldPath)) {
-                    unlink($oldPath);
+                // Delete old image from Cloudinary if it's a Cloudinary URL
+                if (str_contains($experience->evidence_photo, 'cloudinary')) {
+                    $publicId = $this->extractPublicIdFromUrl($experience->evidence_photo);
+                    if ($publicId) {
+                        (new UploadApi())->destroy($publicId);
+                    }
                 }
             }
-            $file = $request->file('evidence_photo');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('images/experiences'), $filename);
-            $data['evidence_photo'] = 'images/experiences/' . $filename;
+            $uploadApi = new UploadApi();
+            $result = $uploadApi->upload($request->file('evidence_photo')->getRealPath(), [
+                'folder' => 'portfolio/experiences',
+                'public_id' => 'exp_' . time() . '_' . uniqid(),
+                'transformation' => [
+                    ['width' => 800, 'height' => 600, 'crop' => 'limit'],
+                ]
+            ]);
+            $data['evidence_photo'] = $result['secure_url'];
         }
 
         $experience->update($data);
@@ -90,5 +104,15 @@ class ExperienceController extends Controller
         $experience->delete();
 
         return back()->with('success', 'Pengalaman berhasil dihapus.');
+    }
+
+    private function extractPublicIdFromUrl($url)
+    {
+        // Extract public_id from Cloudinary URL
+        $pattern = '/\/upload\/(?:v\d+\/)?(.+)\.[a-zA-Z]+$/';
+        if (preg_match($pattern, $url, $matches)) {
+            return $matches[1];
+        }
+        return null;
     }
 }

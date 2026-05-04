@@ -4,7 +4,7 @@
 
 @section('content')
 @php
-    $heroPhotoUrl = $settings?->hero_photo ? asset('images/'.$settings->hero_photo) : null;
+    $heroPhotoUrl = $settings?->hero_photo;
 
     $softSkills = $softSkills ?? collect();
     $hardSkills = $hardSkills ?? collect();

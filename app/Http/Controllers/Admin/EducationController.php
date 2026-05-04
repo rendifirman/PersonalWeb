@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Education;
 use Illuminate\Http\Request;
+use Cloudinary\Api\Upload\UploadApi;
 
 class EducationController extends Controller
 {
@@ -37,10 +38,15 @@ class EducationController extends Controller
         $data['show_on_homepage'] = $request->boolean('show_on_homepage');
 
         if ($request->hasFile('evidence_photo')) {
-            $file = $request->file('evidence_photo');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('images/educations'), $filename);
-            $data['evidence_photo'] = 'images/educations/' . $filename;
+            $uploadApi = new UploadApi();
+            $result = $uploadApi->upload($request->file('evidence_photo')->getRealPath(), [
+                'folder' => 'portfolio/educations',
+                'public_id' => 'edu_' . time() . '_' . uniqid(),
+                'transformation' => [
+                    ['width' => 400, 'height' => 300, 'crop' => 'limit'],
+                ]
+            ]);
+            $data['evidence_photo'] = $result['secure_url'];
         }
 
         Education::create($data);
@@ -71,15 +77,23 @@ class EducationController extends Controller
 
         if ($request->hasFile('evidence_photo')) {
             if ($education->evidence_photo) {
-                $oldPath = public_path($education->evidence_photo);
-                if (file_exists($oldPath)) {
-                    unlink($oldPath);
+                // Delete old image from Cloudinary if it's a Cloudinary URL
+                if (str_contains($education->evidence_photo, 'cloudinary')) {
+                    $publicId = $this->extractPublicIdFromUrl($education->evidence_photo);
+                    if ($publicId) {
+                        (new UploadApi())->destroy($publicId);
+                    }
                 }
             }
-            $file = $request->file('evidence_photo');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('images/educations'), $filename);
-            $data['evidence_photo'] = 'images/educations/' . $filename;
+            $uploadApi = new UploadApi();
+            $result = $uploadApi->upload($request->file('evidence_photo')->getRealPath(), [
+                'folder' => 'portfolio/educations',
+                'public_id' => 'edu_' . time() . '_' . uniqid(),
+                'transformation' => [
+                    ['width' => 400, 'height' => 300, 'crop' => 'limit'],
+                ]
+            ]);
+            $data['evidence_photo'] = $result['secure_url'];
         }
 
         $education->update($data);
@@ -90,11 +104,27 @@ class EducationController extends Controller
     public function destroy(Education $education)
     {
         if ($education->evidence_photo) {
-            Storage::disk('public')->delete($education->evidence_photo);
+            // Delete image from Cloudinary if it's a Cloudinary URL
+            if (str_contains($education->evidence_photo, 'cloudinary')) {
+                $publicId = $this->extractPublicIdFromUrl($education->evidence_photo);
+                if ($publicId) {
+                    (new UploadApi())->destroy($publicId);
+                }
+            }
         }
 
         $education->delete();
 
         return back()->with('success', 'Pendidikan berhasil dihapus.');
+    }
+
+    private function extractPublicIdFromUrl($url)
+    {
+        // Extract public_id from Cloudinary URL
+        $pattern = '/\/upload\/(?:v\d+\/)?(.+)\.[a-zA-Z]+$/';
+        if (preg_match($pattern, $url, $matches)) {
+            return $matches[1];
+        }
+        return null;
     }
 }

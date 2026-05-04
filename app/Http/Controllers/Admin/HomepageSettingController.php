@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\HomepageSetting;
 use App\Models\Skill;
 use Illuminate\Http\Request;
+use Cloudinary\Api\Upload\UploadApi;
 
 class HomepageSettingController extends Controller
 {
@@ -47,30 +48,46 @@ class HomepageSettingController extends Controller
 
         if ($request->hasFile('hero_photo')) {
             if ($settings->hero_photo) {
-                $oldPath = public_path($settings->hero_photo);
-                if (file_exists($oldPath)) {
-                    unlink($oldPath);
+                // Delete old image from Cloudinary if it's a Cloudinary URL
+                if (str_contains($settings->hero_photo, 'cloudinary')) {
+                    $publicId = $this->extractPublicIdFromUrl($settings->hero_photo);
+                    if ($publicId) {
+                        (new UploadApi())->destroy($publicId);
+                    }
                 }
             }
 
-            $file = $request->file('hero_photo');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('images/homepage'), $filename);
-            $data['hero_photo'] = 'images/homepage/' . $filename;
+            $uploadApi = new UploadApi();
+            $result = $uploadApi->upload($request->file('hero_photo')->getRealPath(), [
+                'folder' => 'portfolio/homepage',
+                'public_id' => 'hero_' . time(),
+                'transformation' => [
+                    ['width' => 400, 'height' => 400, 'crop' => 'fill'],
+                ]
+            ]);
+            $data['hero_photo'] = $result['secure_url'];
         }
 
         if ($request->hasFile('photo')) {
             if ($settings->photo) {
-                $oldPath = public_path($settings->photo);
-                if (file_exists($oldPath)) {
-                    unlink($oldPath);
+                // Delete old image from Cloudinary if it's a Cloudinary URL
+                if (str_contains($settings->photo, 'cloudinary')) {
+                    $publicId = $this->extractPublicIdFromUrl($settings->photo);
+                    if ($publicId) {
+                        (new UploadApi())->destroy($publicId);
+                    }
                 }
             }
 
-            $file = $request->file('photo');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('images/homepage'), $filename);
-            $data['photo'] = 'images/homepage/' . $filename;
+            $uploadApi = new UploadApi();
+            $result = $uploadApi->upload($request->file('photo')->getRealPath(), [
+                'folder' => 'portfolio/homepage',
+                'public_id' => 'profile_' . time(),
+                'transformation' => [
+                    ['width' => 200, 'height' => 200, 'crop' => 'fill'],
+                ]
+            ]);
+            $data['photo'] = $result['secure_url'];
         }
 
         $settings->fill($data);
@@ -83,5 +100,16 @@ class HomepageSettingController extends Controller
         }
 
         return back()->with('success', 'Master data homepage berhasil diperbarui.');
+    }
+
+    private function extractPublicIdFromUrl($url)
+    {
+        // Extract public_id from Cloudinary URL
+        // URL format: https://res.cloudinary.com/{cloud_name}/image/upload/v{version}/{public_id}.{format}
+        $pattern = '/\/upload\/(?:v\d+\/)?(.+)\.[a-zA-Z]+$/';
+        if (preg_match($pattern, $url, $matches)) {
+            return $matches[1];
+        }
+        return null;
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Project;
 use Illuminate\Http\Request;
+use Cloudinary\Api\Upload\UploadApi;
 
 class ProjectController extends Controller
 {
@@ -36,10 +37,15 @@ class ProjectController extends Controller
         $data['show_on_homepage'] = $request->boolean('show_on_homepage');
 
         if ($request->hasFile('evidence_photo')) {
-            $file = $request->file('evidence_photo');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('images/projects'), $filename);
-            $data['evidence_photo'] = 'images/projects/' . $filename;
+            $uploadApi = new UploadApi();
+            $result = $uploadApi->upload($request->file('evidence_photo')->getRealPath(), [
+                'folder' => 'portfolio/projects',
+                'public_id' => 'proj_' . time() . '_' . uniqid(),
+                'transformation' => [
+                    ['width' => 800, 'height' => 600, 'crop' => 'limit'],
+                ]
+            ]);
+            $data['evidence_photo'] = $result['secure_url'];
         }
 
         Project::create($data);
@@ -69,15 +75,23 @@ class ProjectController extends Controller
 
         if ($request->hasFile('evidence_photo')) {
             if ($project->evidence_photo) {
-                $oldPath = public_path($project->evidence_photo);
-                if (file_exists($oldPath)) {
-                    unlink($oldPath);
+                // Delete old image from Cloudinary if it's a Cloudinary URL
+                if (str_contains($project->evidence_photo, 'cloudinary')) {
+                    $publicId = $this->extractPublicIdFromUrl($project->evidence_photo);
+                    if ($publicId) {
+                        (new UploadApi())->destroy($publicId);
+                    }
                 }
             }
-            $file = $request->file('evidence_photo');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('images/projects'), $filename);
-            $data['evidence_photo'] = 'images/projects/' . $filename;
+            $uploadApi = new UploadApi();
+            $result = $uploadApi->upload($request->file('evidence_photo')->getRealPath(), [
+                'folder' => 'portfolio/projects',
+                'public_id' => 'proj_' . time() . '_' . uniqid(),
+                'transformation' => [
+                    ['width' => 800, 'height' => 600, 'crop' => 'limit'],
+                ]
+            ]);
+            $data['evidence_photo'] = $result['secure_url'];
         }
 
         $project->update($data);
@@ -90,5 +104,15 @@ class ProjectController extends Controller
         $project->delete();
 
         return back()->with('success', 'Project berhasil dihapus.');
+    }
+
+    private function extractPublicIdFromUrl($url)
+    {
+        // Extract public_id from Cloudinary URL
+        $pattern = '/\/upload\/(?:v\d+\/)?(.+)\.[a-zA-Z]+$/';
+        if (preg_match($pattern, $url, $matches)) {
+            return $matches[1];
+        }
+        return null;
     }
 }

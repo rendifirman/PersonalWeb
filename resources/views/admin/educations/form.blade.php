@@ -110,7 +110,7 @@
             <label class="block text-sm font-medium text-gray-700 mb-1">Foto / Logo Institusi</label>
             @if($education->evidence_photo)
                 <div class="mt-2 mb-3">
-                    <img src="{{ asset('images/'.$education->evidence_photo) }}" alt="Pratinjau pendidikan"
+                    <img src="{{ $education->evidence_photo }}" alt="Pratinjau pendidikan"
                          class="h-40 w-full max-w-md rounded-xl object-cover border border-gray-200 shadow-sm" />
                 </div>
             @endif
